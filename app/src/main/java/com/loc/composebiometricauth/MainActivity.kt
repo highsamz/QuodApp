@@ -1,30 +1,34 @@
 package com.loc.composebiometricauth
 
+import DocumentAnalysisScreen
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.loc.composebiometricauth.ui.screens.CadastralAuthenticationScreen
-import com.loc.composebiometricauth.ui.theme.ComposeBiometricAuthTheme
 import com.loc.composebiometricauth.ui.screens.ScoreAntifraudeForm
 import com.loc.composebiometricauth.ui.screens.SimValidationScreen
+import com.loc.composebiometricauth.ui.theme.ComposeBiometricAuthTheme
 
 class MainActivity : FragmentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        checkCameraPermission()
 
         val biometricAuthenticator = BiometricAuthenticator(this)
 
@@ -39,11 +43,23 @@ class MainActivity : FragmentActivity() {
             }
         }
     }
+
+    private fun checkCameraPermission() {
+        val permission = Manifest.permission.CAMERA
+        if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(permission), CAMERA_PERMISSION_CODE)
+        }
+    }
+
+    companion object {
+        private const val CAMERA_PERMISSION_CODE = 100
+    }
 }
 
 @Composable
 fun AppNavigator(biometricAuthenticator: BiometricAuthenticator) {
     val navController = rememberNavController()
+
     NavHost(navController = navController, startDestination = "main") {
         composable("main") { MainScreen(navController, biometricAuthenticator) }
         composable("document_analysis") { DocumentAnalysisScreen() }
@@ -103,16 +119,3 @@ fun MainScreen(navController: NavController, biometricAuthenticator: BiometricAu
         Text(text = biometricMessage)
     }
 }
-
-@Composable
-fun DocumentAnalysisScreen() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(
-            text = "Documentoscopia: Validação de Documentos",
-            style = MaterialTheme.typography.headlineMedium
-        )
-    }
-}
-
-
-
