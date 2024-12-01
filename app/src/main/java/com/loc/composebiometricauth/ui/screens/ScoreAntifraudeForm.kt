@@ -1,4 +1,4 @@
-package com.loc.composebiometricauth.ui.score
+package com.loc.composebiometricauth.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions

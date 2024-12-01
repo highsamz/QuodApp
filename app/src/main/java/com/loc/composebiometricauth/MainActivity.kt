@@ -1,20 +1,25 @@
 package com.loc.composebiometricauth
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.loc.composebiometricauth.ui.screens.CadastralAuthenticationScreen
 import com.loc.composebiometricauth.ui.theme.ComposeBiometricAuthTheme
-import com.loc.composebiometricauth.ui.score.ScoreAntifraudeForm
+import com.loc.composebiometricauth.ui.screens.ScoreAntifraudeForm
 
 class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -118,15 +123,6 @@ fun SimSwapScreen() {
     }
 }
 
-@Composable
-fun CadastralAuthenticationScreen() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(
-            text = "Autenticação Cadastral: Formulário",
-            style = MaterialTheme.typography.headlineMedium
-        )
-    }
-}
 
 @Composable
 fun FraudScoreScreen(navController: NavController) {
