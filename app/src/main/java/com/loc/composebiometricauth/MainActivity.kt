@@ -20,6 +20,7 @@ import androidx.navigation.compose.rememberNavController
 import com.loc.composebiometricauth.ui.screens.CadastralAuthenticationScreen
 import com.loc.composebiometricauth.ui.theme.ComposeBiometricAuthTheme
 import com.loc.composebiometricauth.ui.screens.ScoreAntifraudeForm
+import com.loc.composebiometricauth.ui.screens.SimValidationScreen
 
 class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,9 +47,9 @@ fun AppNavigator(biometricAuthenticator: BiometricAuthenticator) {
     NavHost(navController = navController, startDestination = "main") {
         composable("main") { MainScreen(navController, biometricAuthenticator) }
         composable("document_analysis") { DocumentAnalysisScreen() }
-        composable("sim_swap") { SimSwapScreen() }
+        composable("sim_swap") { SimValidationScreen() }
         composable("cadastral_authentication") { CadastralAuthenticationScreen() }
-        composable("fraud_score") { FraudScoreScreen(navController) }
+        composable("fraud_score") { ScoreAntifraudeForm {} }
     }
 }
 
@@ -113,20 +114,5 @@ fun DocumentAnalysisScreen() {
     }
 }
 
-@Composable
-fun SimSwapScreen() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(
-            text = "SIM SWAP: Validação de Troca de Chip",
-            style = MaterialTheme.typography.headlineMedium
-        )
-    }
-}
 
 
-@Composable
-fun FraudScoreScreen(navController: NavController) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        ScoreAntifraudeForm(onSubmit = {})
-    }
-}

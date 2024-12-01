@@ -28,7 +28,7 @@ fun calculateFraudScore(cpf: String): Int {
 
 
 @Composable
-fun ScoreAntifraudeForm(onSubmit: (String) -> Unit) {
+fun ScoreAntifraudeForm(onSubmit: (String) -> Unit) { //TODO Corrigir: o cpf só aceita numeros iguais
     var cpf by remember { mutableStateOf(TextFieldValue("")) }
     var isValidCpf by remember { mutableStateOf(false) }
     var score by remember { mutableStateOf<String?>(null) }

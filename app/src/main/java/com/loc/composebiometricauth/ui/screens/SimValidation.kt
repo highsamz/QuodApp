@@ -22,19 +22,15 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun CadastralAuthenticationScreen() {
+fun SimValidationScreen() {
 
     var cpf by remember { mutableStateOf("") }
-    var nome by remember { mutableStateOf("") }
-    var endereco by remember { mutableStateOf("") }
+    var operadora by remember { mutableStateOf("") }
     var telefone by remember { mutableStateOf("") }
-
 
     var cpfError by remember { mutableStateOf(false) }
     var telefoneError by remember { mutableStateOf(false) }
-    var telefonenull by remember { mutableStateOf(false) }
-    var nomeError by remember { mutableStateOf(false) }
-    var enderecoError by remember { mutableStateOf(false) }
+    var operadoraError by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
 
@@ -45,27 +41,13 @@ fun CadastralAuthenticationScreen() {
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Text(
-            text = "Autenticação Cadastral",
+            text = "Validação de Troca de SIM",
             style = MaterialTheme.typography.headlineMedium
         )
 
         TextField(
-            value = nome,
-            onValueChange = {
-                nome = it
-                nomeError = it.isEmpty()
-            },
-            label = { Text("Nome Completo") },
-            isError = nomeError,
-            modifier = Modifier.fillMaxWidth()
-        )
-        if (nomeError) {
-            Text("O nome é obrigatório", color = MaterialTheme.colorScheme.error)
-        }
-
-        TextField(
             value = cpf,
-            onValueChange = { //TODO deixar a caixa de texto em formato de cpf
+            onValueChange = { //TODO deixar caixa de texto em formato de cpf
                 cpf = it.replace(Regex("[^\\d]"), "")
                 cpfError = cpf.length != 11
             },
@@ -79,22 +61,22 @@ fun CadastralAuthenticationScreen() {
         }
 
         TextField(
-            value = endereco,
-            onValueChange = {
-                endereco = it
-                enderecoError = it.isEmpty()
+            value = operadora,
+            onValueChange = { //TODO adicionar enum de lista de operadoras
+                operadora = it
+                operadoraError = it.isEmpty()
             },
-            label = { Text("Endereço") },
-            isError = enderecoError,
+            label = { Text("Operadora") },
+            isError = operadoraError,
             modifier = Modifier.fillMaxWidth()
         )
-        if (enderecoError) {
-            Text("O endereço é obrigatório", color = MaterialTheme.colorScheme.error)
+        if (operadoraError) {
+            Text("A oepradora é obrigatória", color = MaterialTheme.colorScheme.error)
         }
 
         TextField(
-            value = telefone, //TODO Resolver o erro que quando clica em enviar resulta em "dados validados com sucesso'
-            onValueChange = { //TODO deixar a caixa de texto em formato de telefone
+            value = telefone,
+            onValueChange = { //TODO deixar caixa de texto em formato de telefone
                 telefone = it.replace(Regex("[^\\d]"), "")
                 telefoneError = telefone.length != 11
             },
@@ -108,8 +90,8 @@ fun CadastralAuthenticationScreen() {
         }
         Button(
             onClick = {
-                if (!cpfError && !telefoneError && !nomeError && !enderecoError) {
-                    Toast.makeText(context, "Dados validados com sucesso", Toast.LENGTH_SHORT).show()
+                if (!cpfError && !telefoneError && !operadoraError) {
+                    Toast.makeText(context, "Troca de SIM com sucesso", Toast.LENGTH_SHORT).show()
                 } else {
                     Toast.makeText(context, "Preencha corretamente todos os campos", Toast.LENGTH_SHORT).show()
                 }
