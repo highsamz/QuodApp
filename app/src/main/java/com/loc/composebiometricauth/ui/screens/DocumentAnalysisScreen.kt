@@ -1,7 +1,5 @@
-import android.content.Context
-import android.graphics.Bitmap
-import android.net.Uri
 
+import android.graphics.Bitmap
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -14,8 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import java.io.File
 
 @Composable
 fun DocumentAnalysisScreen() {

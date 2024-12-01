@@ -32,7 +32,6 @@ fun CadastralAuthenticationScreen() {
 
     var cpfError by remember { mutableStateOf(false) }
     var telefoneError by remember { mutableStateOf(false) }
-    var telefonenull by remember { mutableStateOf(false) }
     var nomeError by remember { mutableStateOf(false) }
     var enderecoError by remember { mutableStateOf(false) }
 
