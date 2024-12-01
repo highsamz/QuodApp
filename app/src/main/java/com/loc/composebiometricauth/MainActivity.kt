@@ -14,6 +14,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.loc.composebiometricauth.ui.theme.ComposeBiometricAuthTheme
+import com.loc.composebiometricauth.ui.score.ScoreAntifraudeForm
 
 class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,7 +43,7 @@ fun AppNavigator(biometricAuthenticator: BiometricAuthenticator) {
         composable("document_analysis") { DocumentAnalysisScreen() }
         composable("sim_swap") { SimSwapScreen() }
         composable("cadastral_authentication") { CadastralAuthenticationScreen() }
-        composable("fraud_score") { FraudScoreScreen() }
+        composable("fraud_score") { FraudScoreScreen(navController) }
     }
 }
 
@@ -128,11 +129,8 @@ fun CadastralAuthenticationScreen() {
 }
 
 @Composable
-fun FraudScoreScreen() {
+fun FraudScoreScreen(navController: NavController) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(
-            text = "Score Antifraude: Formulário",
-            style = MaterialTheme.typography.headlineMedium
-        )
+        ScoreAntifraudeForm(onSubmit = {})
     }
 }
