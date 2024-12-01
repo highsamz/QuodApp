@@ -57,10 +57,9 @@ fun SplashScreen(onTimeout: () -> Unit) {
     }
 }
 
-/*
-@Preview (showBackground = true)
+/*@Preview(showBackground = true)
 @Composable
-fun SplashPreview (){
+fun SplashPreview() {
     SplashScreen {
 
     }
