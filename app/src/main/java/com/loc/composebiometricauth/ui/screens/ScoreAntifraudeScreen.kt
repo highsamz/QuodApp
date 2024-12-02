@@ -38,20 +38,18 @@ fun ScoreAntifraudeForm(onSubmit: (String) -> Unit) {
 
         val offsetMapping = object : OffsetMapping {
             override fun originalToTransformed(offset: Int): Int {
-                // Map offset in the original text to the formatted text
                 var transformedOffset = offset
-                if (offset > 3) transformedOffset += 1 // Add period after first 3 digits
-                if (offset > 6) transformedOffset += 1 // Add period after next 3 digits
-                if (offset > 9) transformedOffset += 1 // Add dash after 9 digits
+                if (offset > 3) transformedOffset += 1
+                if (offset > 6) transformedOffset += 1
+                if (offset > 9) transformedOffset += 1
                 return transformedOffset.coerceAtMost(formattedText.length)
             }
 
             override fun transformedToOriginal(offset: Int): Int {
-                // Map offset in the formatted text back to the original text
                 var originalOffset = offset
-                if (offset > 3) originalOffset -= 1 // Adjust for first period
-                if (offset > 7) originalOffset -= 1 // Adjust for second period
-                if (offset > 11) originalOffset -= 1 // Adjust for dash
+                if (offset > 3) originalOffset -= 1
+                if (offset > 7) originalOffset -= 1
+                if (offset > 11) originalOffset -= 1
                 return originalOffset.coerceAtMost(originalText.length)
             }
         }
@@ -64,7 +62,7 @@ fun ScoreAntifraudeForm(onSubmit: (String) -> Unit) {
 
     fun isCpfValid(cpfText: String): Boolean {
         val onlyDigits = cpfText.replace("[^\\d]".toRegex(), "")
-        return onlyDigits.length == 11 // Valida apenas que há 11 dígitos
+        return onlyDigits.length == 11
     }
 
     LaunchedEffect(cpf.text) {

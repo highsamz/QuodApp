@@ -42,12 +42,11 @@ fun SimValidationScreen() {
             style = MaterialTheme.typography.headlineMedium
         )
 
-        // Campo de CPF
         TextField(
             value = cpf,
             onValueChange = {
                 val digitsOnly = it.replace(Regex("[^\\d]"), "")
-                if (digitsOnly.length <= 11) { // Limita a 11 dígitos
+                if (digitsOnly.length <= 11) {
                     cpf = digitsOnly.formatCpf()
                 }
                 cpfError = digitsOnly.length != 11
@@ -61,7 +60,6 @@ fun SimValidationScreen() {
             Text("CPF inválido", color = MaterialTheme.colorScheme.error)
         }
 
-        // Campo de Operadora
         TextField(
             value = operadora,
             onValueChange = {
@@ -81,7 +79,7 @@ fun SimValidationScreen() {
             value = telefone,
             onValueChange = {
                 val digitsOnly = it.replace(Regex("[^\\d]"), "")
-                if (digitsOnly.length <= 11) { // Limita a 11 dígitos
+                if (digitsOnly.length <= 11) {
                     telefone = digitsOnly.formatPhone()
                 }
                 telefoneError = digitsOnly.length != 11
@@ -95,7 +93,6 @@ fun SimValidationScreen() {
             Text("Telefone inválido", color = MaterialTheme.colorScheme.error)
         }
 
-        // Botão de envio
         Button(
             onClick = {
                 if (!cpfError && !telefoneError && !operadoraError) {
@@ -111,12 +108,10 @@ fun SimValidationScreen() {
     }
 }
 
-// Função de formatação para CPF
 fun String.formatCpf(): String {
     return this.replace(Regex("(\\d{3})(\\d{3})(\\d{3})(\\d{2})"), "$1.$2.$3-$4")
 }
 
-// Função de formatação para telefone
 fun String.formatPhone(): String {
     return this.replace(Regex("(\\d{2})(\\d{5})(\\d{4})"), "($1) $2-$3")
 }

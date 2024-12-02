@@ -68,7 +68,7 @@ fun CadastralAuthenticationScreen() {
             value = cpf,
             onValueChange = {
                 val digitsOnly = it.replace(Regex("[^\\d]"), "")
-                if (digitsOnly.length <= 11) { // Limita a 11 dígitos
+                if (digitsOnly.length <= 11) {
                     cpf = digitsOnly.formatCpf()
                 }
                 cpfError = digitsOnly.length != 11
@@ -100,7 +100,7 @@ fun CadastralAuthenticationScreen() {
             value = telefone,
             onValueChange = {
                 val digitsOnly = it.replace(Regex("[^\\d]"), "")
-                if (digitsOnly.length <= 11) { // Limita a 11 dígitos
+                if (digitsOnly.length <= 11) {
                     telefone = digitsOnly.formatPhone()
                 }
                 telefoneError = digitsOnly.length != 11
