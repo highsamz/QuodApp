@@ -20,6 +20,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import formatCpf
+import formatPhone
 
 @Composable
 fun CadastralAuthenticationScreen() {
@@ -65,9 +67,12 @@ fun CadastralAuthenticationScreen() {
 
         TextField(
             value = cpf,
-            onValueChange = { //TODO deixar a caixa de texto em formato de cpf
-                cpf = it.replace(Regex("[^\\d]"), "")
-                cpfError = cpf.length != 11
+            onValueChange = {
+                val digitsOnly = it.replace(Regex("[^\\d]"), "")
+                if (digitsOnly.length <= 11) { // Limita a 11 dígitos
+                    cpf = digitsOnly.formatCpf()
+                }
+                cpfError = digitsOnly.length != 11
             },
             label = { Text("CPF") },
             isError = cpfError,
@@ -93,10 +98,13 @@ fun CadastralAuthenticationScreen() {
         }
 
         TextField(
-            value = telefone, //TODO Resolver o erro que quando clica em enviar resulta em "dados validados com sucesso'
-            onValueChange = { //TODO deixar a caixa de texto em formato de telefone
-                telefone = it.replace(Regex("[^\\d]"), "")
-                telefoneError = telefone.length != 11
+            value = telefone,
+            onValueChange = {
+                val digitsOnly = it.replace(Regex("[^\\d]"), "")
+                if (digitsOnly.length <= 11) { // Limita a 11 dígitos
+                    telefone = digitsOnly.formatPhone()
+                }
+                telefoneError = digitsOnly.length != 11
             },
             label = { Text("Telefone Celular") },
             isError = telefoneError,
@@ -106,6 +114,7 @@ fun CadastralAuthenticationScreen() {
         if (telefoneError) {
             Text("Telefone inválido", color = MaterialTheme.colorScheme.error)
         }
+
         Button(
             onClick = {
                 if (!cpfError && !telefoneError && !nomeError && !enderecoError) {

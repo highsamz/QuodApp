@@ -11,26 +11,14 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.input.KeyboardType
-
-fun calculateFraudScore(cpf: String): Int {
-    val onlyDigits = cpf.replace("[^\\d]".toRegex(), "")
-
-    if (onlyDigits.length != 11) return 0
-    var sum = 0
-    for (i in onlyDigits.indices) {
-        sum += onlyDigits[i].toString().toInt() * (i + 1)
-    }
-
-    return sum % 1000
-}
-
+import androidx.compose.ui.unit.dp
+import kotlin.random.Random
 
 @Composable
-fun ScoreAntifraudeForm(onSubmit: (String) -> Unit) { //TODO Corrigir: o cpf só aceita numeros iguais
+fun ScoreAntifraudeForm(onSubmit: (String) -> Unit) {
     var cpf by remember { mutableStateOf(TextFieldValue("")) }
-    var isValidCpf by remember { mutableStateOf(false) }
+    var isValidCpf by remember { mutableStateOf(true) }
     var score by remember { mutableStateOf<String?>(null) }
 
     fun formatCpf(cpfText: String): String {
@@ -45,32 +33,38 @@ fun ScoreAntifraudeForm(onSubmit: (String) -> Unit) { //TODO Corrigir: o cpf só
     }
 
     val cpfVisualTransformation = VisualTransformation { text ->
-        val formattedCpf = formatCpf(text.text)
-        val annotatedCpf = buildAnnotatedString {
-            append(formattedCpf)
+        val originalText = text.text
+        val formattedText = formatCpf(originalText)
+
+        val offsetMapping = object : OffsetMapping {
+            override fun originalToTransformed(offset: Int): Int {
+                // Map offset in the original text to the formatted text
+                var transformedOffset = offset
+                if (offset > 3) transformedOffset += 1 // Add period after first 3 digits
+                if (offset > 6) transformedOffset += 1 // Add period after next 3 digits
+                if (offset > 9) transformedOffset += 1 // Add dash after 9 digits
+                return transformedOffset.coerceAtMost(formattedText.length)
+            }
+
+            override fun transformedToOriginal(offset: Int): Int {
+                // Map offset in the formatted text back to the original text
+                var originalOffset = offset
+                if (offset > 3) originalOffset -= 1 // Adjust for first period
+                if (offset > 7) originalOffset -= 1 // Adjust for second period
+                if (offset > 11) originalOffset -= 1 // Adjust for dash
+                return originalOffset.coerceAtMost(originalText.length)
+            }
         }
-        TransformedText(annotatedCpf, OffsetMapping.Identity)
+
+        TransformedText(
+            text = buildAnnotatedString { append(formattedText) },
+            offsetMapping = offsetMapping
+        )
     }
 
     fun isCpfValid(cpfText: String): Boolean {
         val onlyDigits = cpfText.replace("[^\\d]".toRegex(), "")
-        if (onlyDigits.length != 11) return false
-
-        var sum1 = 0
-        var sum2 = 0
-        var digit1: Int
-        var digit2: Int
-
-        for (i in 0..8) sum1 += (onlyDigits[i].toString().toInt() * (10 - i))
-        digit1 = (sum1 * 10) % 11
-        if (digit1 == 10 || digit1 == 11) digit1 = 0
-
-        for (i in 0..8) sum2 += (onlyDigits[i].toString().toInt() * (11 - i))
-        sum2 += digit1 * 2
-        digit2 = (sum2 * 10) % 11
-        if (digit2 == 10 || digit2 == 11) digit2 = 0
-
-        return onlyDigits[9].toString().toInt() == digit1 && onlyDigits[10].toString().toInt() == digit2
+        return onlyDigits.length == 11 // Valida apenas que há 11 dígitos
     }
 
     LaunchedEffect(cpf.text) {
@@ -101,8 +95,8 @@ fun ScoreAntifraudeForm(onSubmit: (String) -> Unit) { //TODO Corrigir: o cpf só
         Button(
             onClick = {
                 if (isValidCpf) {
-                    onSubmit(cpf.text) // Chama a função de submit
-                    score = "Score Calculado: ${calculateFraudScore(cpf.text)}"
+                    onSubmit(cpf.text)
+                    score = "Score Calculado: ${Random.nextInt(100, 1000)}"
                 }
             },
             enabled = isValidCpf

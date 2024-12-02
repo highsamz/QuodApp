@@ -1,5 +1,3 @@
-package com.loc.composebiometricauth.ui.screens
-
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,7 +21,6 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun SimValidationScreen() {
-
     var cpf by remember { mutableStateOf("") }
     var operadora by remember { mutableStateOf("") }
     var telefone by remember { mutableStateOf("") }
@@ -45,11 +42,15 @@ fun SimValidationScreen() {
             style = MaterialTheme.typography.headlineMedium
         )
 
+        // Campo de CPF
         TextField(
             value = cpf,
-            onValueChange = { //TODO deixar caixa de texto em formato de cpf
-                cpf = it.replace(Regex("[^\\d]"), "")
-                cpfError = cpf.length != 11
+            onValueChange = {
+                val digitsOnly = it.replace(Regex("[^\\d]"), "")
+                if (digitsOnly.length <= 11) { // Limita a 11 dígitos
+                    cpf = digitsOnly.formatCpf()
+                }
+                cpfError = digitsOnly.length != 11
             },
             label = { Text("CPF") },
             isError = cpfError,
@@ -60,9 +61,10 @@ fun SimValidationScreen() {
             Text("CPF inválido", color = MaterialTheme.colorScheme.error)
         }
 
+        // Campo de Operadora
         TextField(
             value = operadora,
-            onValueChange = { //TODO adicionar enum de lista de operadoras
+            onValueChange = {
                 operadora = it
                 operadoraError = it.isEmpty()
             },
@@ -71,14 +73,18 @@ fun SimValidationScreen() {
             modifier = Modifier.fillMaxWidth()
         )
         if (operadoraError) {
-            Text("A oepradora é obrigatória", color = MaterialTheme.colorScheme.error)
+            Text("A operadora é obrigatória", color = MaterialTheme.colorScheme.error)
         }
 
+        // Campo de Telefone
         TextField(
             value = telefone,
-            onValueChange = { //TODO deixar caixa de texto em formato de telefone
-                telefone = it.replace(Regex("[^\\d]"), "")
-                telefoneError = telefone.length != 11
+            onValueChange = {
+                val digitsOnly = it.replace(Regex("[^\\d]"), "")
+                if (digitsOnly.length <= 11) { // Limita a 11 dígitos
+                    telefone = digitsOnly.formatPhone()
+                }
+                telefoneError = digitsOnly.length != 11
             },
             label = { Text("Telefone Celular") },
             isError = telefoneError,
@@ -88,6 +94,8 @@ fun SimValidationScreen() {
         if (telefoneError) {
             Text("Telefone inválido", color = MaterialTheme.colorScheme.error)
         }
+
+        // Botão de envio
         Button(
             onClick = {
                 if (!cpfError && !telefoneError && !operadoraError) {
@@ -101,4 +109,14 @@ fun SimValidationScreen() {
             Text("Enviar")
         }
     }
+}
+
+// Função de formatação para CPF
+fun String.formatCpf(): String {
+    return this.replace(Regex("(\\d{3})(\\d{3})(\\d{3})(\\d{2})"), "$1.$2.$3-$4")
+}
+
+// Função de formatação para telefone
+fun String.formatPhone(): String {
+    return this.replace(Regex("(\\d{2})(\\d{5})(\\d{4})"), "($1) $2-$3")
 }

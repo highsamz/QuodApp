@@ -1,6 +1,7 @@
 package com.loc.composebiometricauth
 
 import DocumentAnalysisScreen
+import SimValidationScreen
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -27,7 +28,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.loc.composebiometricauth.ui.screens.CadastralAuthenticationScreen
 import com.loc.composebiometricauth.ui.screens.ScoreAntifraudeForm
-import com.loc.composebiometricauth.ui.screens.SimValidationScreen
 import com.loc.composebiometricauth.ui.theme.ComposeBiometricAuthTheme
 import com.loc.composebiometricauth.ui.screens.SplashScreen
 import com.loc.composebiometricauth.ui.theme.BackColor
