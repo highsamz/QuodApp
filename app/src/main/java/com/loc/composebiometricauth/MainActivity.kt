@@ -257,8 +257,8 @@ fun MainScreen(navController: NavController, biometricAuthenticator: BiometricAu
                         onSuccess = {
                             biometricMessage = "Autenticação bem-sucedida!"
                         },
-                        onError = { _, errorString ->
-                            biometricMessage = "Erro: $errorString"
+                        onError = { _, _ ->
+                            biometricMessage = "Erro: Operação cancelada pelo usuario"
                         },
                         onFailed = {
                             biometricMessage = "Autenticação falhou."

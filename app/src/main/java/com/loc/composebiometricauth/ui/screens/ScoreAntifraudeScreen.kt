@@ -17,28 +17,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.loc.composebiometricauth.ui.theme.QuodGray
 import com.loc.composebiometricauth.ui.theme.QuodPurple
-
-fun calculateFraudScore(cpf: String): Int {
-    val onlyDigits = cpf.replace("[^\\d]".toRegex(), "")
-
-    if (onlyDigits.length != 11) return 0
-    var sum = 0
-    for (i in onlyDigits.indices) {
-        sum += onlyDigits[i].toString().toInt() * (i + 1)
-    }
-
-    return sum % 1000
-}
-
+import kotlin.random.Random
 
 @Composable
 fun ScoreAntifraudeForm(onSubmit: (String) -> Unit) {
     var cpf by remember { mutableStateOf(TextFieldValue("")) }
-    var isValidCpf by remember { mutableStateOf(false) }
+    var isValidCpf by remember { mutableStateOf(true) }
     var score by remember { mutableStateOf<String?>(null) }
 
     fun formatCpf(cpfText: String): String {
@@ -53,115 +40,108 @@ fun ScoreAntifraudeForm(onSubmit: (String) -> Unit) {
     }
 
     val cpfVisualTransformation = VisualTransformation { text ->
-        val formattedCpf = formatCpf(text.text)
-        val annotatedCpf = buildAnnotatedString {
-            append(formattedCpf)
+        val originalText = text.text
+        val formattedText = formatCpf(originalText)
+
+        val offsetMapping = object : OffsetMapping {
+            override fun originalToTransformed(offset: Int): Int {
+                var transformedOffset = offset
+                if (offset > 3) transformedOffset += 1
+                if (offset > 6) transformedOffset += 1
+                if (offset > 9) transformedOffset += 1
+                return transformedOffset.coerceAtMost(formattedText.length)
+            }
+
+            override fun transformedToOriginal(offset: Int): Int {
+                var originalOffset = offset
+                if (offset > 3) originalOffset -= 1
+                if (offset > 7) originalOffset -= 1
+                if (offset > 11) originalOffset -= 1
+                return originalOffset.coerceAtMost(originalText.length)
+            }
         }
-        TransformedText(annotatedCpf, OffsetMapping.Identity)
+
+        TransformedText(
+            text = buildAnnotatedString { append(formattedText) },
+            offsetMapping = offsetMapping
+        )
     }
 
     fun isCpfValid(cpfText: String): Boolean {
         val onlyDigits = cpfText.replace("[^\\d]".toRegex(), "")
-        if (onlyDigits.length != 11) return false
-
-        var sum1 = 0
-        var sum2 = 0
-        var digit1: Int
-        var digit2: Int
-
-        for (i in 0..8) sum1 += (onlyDigits[i].toString().toInt() * (10 - i))
-        digit1 = (sum1 * 10) % 11
-        if (digit1 == 10 || digit1 == 11) digit1 = 0
-
-        for (i in 0..8) sum2 += (onlyDigits[i].toString().toInt() * (11 - i))
-        sum2 += digit1 * 2
-        digit2 = (sum2 * 10) % 11
-        if (digit2 == 10 || digit2 == 11) digit2 = 0
-
-        return onlyDigits[9].toString().toInt() == digit1 && onlyDigits[10].toString().toInt() == digit2
+        return onlyDigits.length == 11
     }
-    Surface( //TODO Retirar esse Surface depois, só serve para o preview
-        modifier = Modifier.fillMaxSize(),
-        color = QuodGray
+
+    LaunchedEffect(cpf.text) {
+        isValidCpf = isCpfValid(cpf.text)
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
 
-        LaunchedEffect(cpf.text) {
-            isValidCpf = isCpfValid(cpf.text)
-        }
+        Text(text = "Verificar Score",
+            fontSize = 30.sp,
+            fontWeight = FontWeight.Normal,
+            style = MaterialTheme.typography.headlineMedium)
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+        Spacer(modifier = Modifier.height(50.dp))
+
+        TextField(
+            value = cpf,
+            onValueChange = { cpf = it },
+            label = { Text("CPF") },
+            isError = !isValidCpf,
+            visualTransformation = cpfVisualTransformation,
+            modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = KeyboardOptions.Default.copy(
+                keyboardType = KeyboardType.Number
+            ),
+            maxLines = 1
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Button(
+            onClick = {
+                if (isValidCpf) {
+                    onSubmit(cpf.text)
+                    score = "Score Calculado: ${Random.nextInt(100, 1000)}"
+                }
+            },modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .height(45.dp)
+                .clip(RoundedCornerShape(8.dp)),
+            colors = ButtonDefaults.buttonColors(QuodPurple),
+            shape = RoundedCornerShape(8.dp),
+            enabled = isValidCpf
         ) {
+            Text("Enviar",
+                color = QuodGray,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center)
+        }
 
-            Text(text = "Verificar Score",
-                fontSize = 30.sp,
-                fontWeight = FontWeight.Normal,
-                style = MaterialTheme.typography.headlineMedium)
-
-            Spacer(modifier = Modifier.height(50.dp))
-
-            TextField(
-                value = cpf,
-                onValueChange = { cpf = it },
-                label = { Text("CPF") },
-                isError = !isValidCpf,
-                visualTransformation = cpfVisualTransformation,
-                modifier = Modifier.fillMaxWidth(),
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    keyboardType = KeyboardType.Number
-                ),
-                maxLines = 1
+        if (!isValidCpf) {
+            Text(
+                text = "CPF inválido",
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall
             )
+        }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Button(
-                onClick = {
-                    if (isValidCpf) {
-                        onSubmit(cpf.text)
-                        score = "Score Calculado: ${calculateFraudScore(cpf.text)}"
-                    }
-                },modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .height(45.dp)
-                    .clip(RoundedCornerShape(8.dp)),
-                colors = ButtonDefaults.buttonColors(QuodPurple),
-                shape = RoundedCornerShape(8.dp),
-                enabled = isValidCpf
-            ) {
-                Text("Enviar",
-                    color = QuodGray,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center)
-            }
-
-            if (!isValidCpf) {
-                Text(
-                    text = "CPF inválido",
-                    color = MaterialTheme.colorScheme.error,
-                    style = MaterialTheme.typography.bodySmall
-                )
-            }
-
-            score?.let {
-                Text(
-                    text = it,
-                    style = MaterialTheme.typography.headlineMedium,
-                    modifier = Modifier.padding(top = 16.dp)
-                )
-            }
+        score?.let {
+            Text(
+                text = it,
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.padding(top = 16.dp)
+            )
         }
     }
-}
 
-@Preview(showBackground = true)
-@Composable
-fun PreviewScore(){
-    ScoreAntifraudeForm {
-    }
 }
