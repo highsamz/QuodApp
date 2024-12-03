@@ -1,6 +1,5 @@
 package com.loc.composebiometricauth
 
-import DocumentAnalysisScreen
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -14,6 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -26,12 +27,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.loc.composebiometricauth.ui.screens.CadastralAuthenticationScreen
+import com.loc.composebiometricauth.ui.screens.DocumentAnalysisScreen
 import com.loc.composebiometricauth.ui.screens.ScoreAntifraudeForm
 import com.loc.composebiometricauth.ui.screens.SimValidationScreen
 import com.loc.composebiometricauth.ui.theme.ComposeBiometricAuthTheme
 import com.loc.composebiometricauth.ui.screens.SplashScreen
-import com.loc.composebiometricauth.ui.theme.BackColor
-import com.loc.composebiometricauth.ui.theme.TxtColor
+import com.loc.composebiometricauth.ui.theme.QuodBlack
+import com.loc.composebiometricauth.ui.theme.QuodGray
+
 
 class MainActivity : FragmentActivity() {
     private var showSplashScreen by mutableStateOf(true)
@@ -47,7 +50,7 @@ class MainActivity : FragmentActivity() {
             ComposeBiometricAuthTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = BackColor
+                    color = QuodGray
                 ) {
                     if (showSplashScreen){
                         SplashScreen (onTimeout = {
@@ -87,145 +90,165 @@ fun AppNavigator(biometricAuthenticator: BiometricAuthenticator) {
 
 @Composable
 fun MainScreen(navController: NavController, biometricAuthenticator: BiometricAuthenticator) {
-        var biometricMessage by remember { mutableStateOf("") }
 
-        Column(
-            Modifier
+    val colinFont = FontFamily(Font(R.font.colin_extralight))
+
+    var biometricMessage by remember { mutableStateOf("") }
+
+
+
+    Column(
+        Modifier
+            .padding(
+                vertical = 70.dp,
+                horizontal = 10.dp
+            ),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(modifier = Modifier.padding(bottom = 70.dp),
+            text = "QuOD",
+            fontFamily = colinFont,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 70.sp,
+            color = QuodBlack
+        )
+
+
+        Button(
+            onClick = { navController.navigate("document_analysis") },
+            modifier = Modifier
                 .fillMaxWidth()
-                .padding(
-                    vertical = 70.dp,
-                    horizontal = 25.dp
-                ),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Button(onClick = { navController.navigate("document_analysis") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.Start)
-                    .height(55.dp)
-                    .shadow(
-                        2.dp,
-                        shape = RoundedCornerShape(8.dp),
-                        spotColor = Color.Black
-                    )
-                    .clip(RoundedCornerShape(8.dp))
-                ,colors = ButtonDefaults.buttonColors(Color.White),
-                shape = RoundedCornerShape(8.dp)
-            )
-            {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Start
+                .align(Alignment.Start)
+                .height(55.dp)
+                .shadow(
+                    2.dp,
+                    shape = RoundedCornerShape(8.dp),
+                    spotColor = Color.Black
                 )
-                {
-                    Text(text = "Análise de Documentos",
-                        color = TxtColor,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center,
-                    )
+                .clip(RoundedCornerShape(8.dp)),
+            colors = ButtonDefaults.buttonColors(Color.White),
+            shape = RoundedCornerShape(8.dp),
 
-                }
-            }
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            Button(onClick = { navController.navigate("sim_swap") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.Start)
-                    .height(55.dp)
-                    .shadow(
-                        2.dp,
-                        shape = RoundedCornerShape(8.dp),
-                        spotColor = Color.Black
-                    )
-                    .clip(RoundedCornerShape(8.dp))
-                ,colors = ButtonDefaults.buttonColors(Color.White),
-                shape = RoundedCornerShape(8.dp)
+        )
+        {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Start
             )
             {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Start
+                Text(
+                    text = "Análise de Documentos",
+                    color = QuodBlack,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Medium,
+                    textAlign = TextAlign.Center,
                 )
-                {
-                    Text(
-                        text = "SIM SWAP",
-                        color = TxtColor,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center
-                    )
-                }
+
             }
+        }
 
-            Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
-            Button(onClick = { navController.navigate("cadastral_authentication")  },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.Start)
-                    .height(55.dp)
-                    .shadow(
-                        2.dp,
-                        shape = RoundedCornerShape(8.dp),
-                        spotColor = Color.Black
-                    )
-                    .clip(RoundedCornerShape(8.dp))
-                ,colors = ButtonDefaults.buttonColors(Color.White),
-                shape = RoundedCornerShape(8.dp)
-            )
-            {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Start
-                ){
-                    Text(text = "Autenticação Cadastral",
-                        color = TxtColor,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center)
-
-                }
-            }
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            Button(onClick = { navController.navigate("fraud_score") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.Start)
-                    .height(55.dp)
-                    .shadow(
-                        2.dp,
-                        shape = RoundedCornerShape(8.dp),
-                        spotColor = Color.Black
-                    )
-                    .clip(RoundedCornerShape(8.dp))
-                ,colors = ButtonDefaults.buttonColors(Color.White),
-                shape = RoundedCornerShape(8.dp)
-            )
-            {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Start
+        Button(
+            onClick = { navController.navigate("sim_swap") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.Start)
+                .height(55.dp)
+                .shadow(
+                    2.dp,
+                    shape = RoundedCornerShape(8.dp),
+                    spotColor = Color.Black
                 )
-                {
-                    Text(text = "Score Antifraude",
-                        color = TxtColor,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center)
-                }
+                .clip(RoundedCornerShape(8.dp)),
+            colors = ButtonDefaults.buttonColors(Color.White),
+            shape = RoundedCornerShape(8.dp)
+        )
+        {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Start
+            )
+            {
+                Text(
+                    text = "SIM SWAP",
+                    color = QuodBlack,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Medium,
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        Button(
+            onClick = { navController.navigate("cadastral_authentication") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.Start)
+                .height(55.dp)
+                .shadow(
+                    2.dp,
+                    shape = RoundedCornerShape(8.dp),
+                    spotColor = Color.Black
+                )
+                .clip(RoundedCornerShape(8.dp)), colors = ButtonDefaults.buttonColors(Color.White),
+            shape = RoundedCornerShape(8.dp)
+        )
+        {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Start
+            ) {
+                Text(
+                    text = "Autenticação Cadastral",
+                    color = QuodBlack,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Medium,
+                    textAlign = TextAlign.Center
+                )
 
             }
+        }
 
-            Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
-            Button(
-                onClick = {
+        Button(
+            onClick = { navController.navigate("fraud_score")  },
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.Start)
+                .height(55.dp)
+                .shadow(
+                    2.dp,
+                    shape = RoundedCornerShape(8.dp),
+                    spotColor = Color.Black
+                )
+                .clip(RoundedCornerShape(8.dp)), colors = ButtonDefaults.buttonColors(Color.White),
+            shape = RoundedCornerShape(8.dp)
+        )
+        {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Start
+            )
+            {
+                Text(
+                    text = "Score Antifraude",
+                    color = QuodBlack,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Medium,
+                    textAlign = TextAlign.Center
+                )
+            }
+
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        Button(
+            onClick = {
                     biometricAuthenticator.promptBiometricAuth(
                         title = "Login Biométrico",
                         subTitle = "Use sua impressão digital para autenticar",
@@ -241,35 +264,37 @@ fun MainScreen(navController: NavController, biometricAuthenticator: BiometricAu
                             biometricMessage = "Autenticação falhou."
                         }
                     )
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.Start)
-                    .height(55.dp)
-                    .shadow(
-                        2.dp,
-                        shape = RoundedCornerShape(8.dp),
-                        spotColor = Color.Black
-                    )
-                    .clip(RoundedCornerShape(8.dp))
-                ,colors = ButtonDefaults.buttonColors(Color.White),
-                shape = RoundedCornerShape(8.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Start
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.Start)
+                .height(55.dp)
+                .shadow(
+                    2.dp,
+                    shape = RoundedCornerShape(8.dp),
+                    spotColor = Color.Black
                 )
-                {
-                    Text(text = "Autenticar com Biometria",
-                        color = TxtColor,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center)
-                }
-
+                .clip(RoundedCornerShape(8.dp)), colors = ButtonDefaults.buttonColors(Color.White),
+            shape = RoundedCornerShape(8.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Start
+            )
+            {
+                Text(
+                    text = "Autenticar com Biometria",
+                    color = QuodBlack,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Medium,
+                    textAlign = TextAlign.Center
+                )
             }
 
-            Spacer(modifier = Modifier.height(20.dp))
-            Text(text = biometricMessage)
         }
+
+        Spacer(modifier = Modifier.height(20.dp))
+        Text(text = biometricMessage)
+    }
+
 }

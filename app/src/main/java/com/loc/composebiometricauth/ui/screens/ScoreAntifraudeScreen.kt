@@ -1,18 +1,26 @@
 package com.loc.composebiometricauth.ui.screens
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
+import com.loc.composebiometricauth.ui.theme.QuodGray
+import com.loc.composebiometricauth.ui.theme.QuodPurple
 
 fun calculateFraudScore(cpf: String): Int {
     val onlyDigits = cpf.replace("[^\\d]".toRegex(), "")
@@ -28,7 +36,7 @@ fun calculateFraudScore(cpf: String): Int {
 
 
 @Composable
-fun ScoreAntifraudeForm(onSubmit: (String) -> Unit) { //TODO Corrigir: o cpf só aceita numeros iguais
+fun ScoreAntifraudeForm(onSubmit: (String) -> Unit) {
     var cpf by remember { mutableStateOf(TextFieldValue("")) }
     var isValidCpf by remember { mutableStateOf(false) }
     var score by remember { mutableStateOf<String?>(null) }
@@ -72,58 +80,88 @@ fun ScoreAntifraudeForm(onSubmit: (String) -> Unit) { //TODO Corrigir: o cpf só
 
         return onlyDigits[9].toString().toInt() == digit1 && onlyDigits[10].toString().toInt() == digit2
     }
-
-    LaunchedEffect(cpf.text) {
-        isValidCpf = isCpfValid(cpf.text)
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+    Surface( //TODO Retirar esse Surface depois, só serve para o preview
+        modifier = Modifier.fillMaxSize(),
+        color = QuodGray
     ) {
-        TextField(
-            value = cpf,
-            onValueChange = { cpf = it },
-            label = { Text("CPF") },
-            isError = !isValidCpf,
-            visualTransformation = cpfVisualTransformation,
-            modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType = KeyboardType.Number
-            ),
-            maxLines = 1
-        )
-        Spacer(modifier = Modifier.height(16.dp))
 
-        Button(
-            onClick = {
-                if (isValidCpf) {
-                    onSubmit(cpf.text) // Chama a função de submit
-                    score = "Score Calculado: ${calculateFraudScore(cpf.text)}"
-                }
-            },
-            enabled = isValidCpf
+        LaunchedEffect(cpf.text) {
+            isValidCpf = isCpfValid(cpf.text)
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
-            Text("Enviar")
-        }
 
-        if (!isValidCpf) {
-            Text(
-                text = "CPF inválido",
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodySmall
-            )
-        }
+            Text(text = "Verificar Score",
+                fontSize = 30.sp,
+                fontWeight = FontWeight.Normal,
+                style = MaterialTheme.typography.headlineMedium)
 
-        score?.let {
-            Text(
-                text = it,
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.padding(top = 16.dp)
+            Spacer(modifier = Modifier.height(50.dp))
+
+            TextField(
+                value = cpf,
+                onValueChange = { cpf = it },
+                label = { Text("CPF") },
+                isError = !isValidCpf,
+                visualTransformation = cpfVisualTransformation,
+                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Number
+                ),
+                maxLines = 1
             )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(
+                onClick = {
+                    if (isValidCpf) {
+                        onSubmit(cpf.text)
+                        score = "Score Calculado: ${calculateFraudScore(cpf.text)}"
+                    }
+                },modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .height(45.dp)
+                    .clip(RoundedCornerShape(8.dp)),
+                colors = ButtonDefaults.buttonColors(QuodPurple),
+                shape = RoundedCornerShape(8.dp),
+                enabled = isValidCpf
+            ) {
+                Text("Enviar",
+                    color = QuodGray,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center)
+            }
+
+            if (!isValidCpf) {
+                Text(
+                    text = "CPF inválido",
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+
+            score?.let {
+                Text(
+                    text = it,
+                    style = MaterialTheme.typography.headlineMedium,
+                    modifier = Modifier.padding(top = 16.dp)
+                )
+            }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewScore(){
+    ScoreAntifraudeForm {
     }
 }

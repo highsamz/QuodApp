@@ -13,7 +13,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.loc.composebiometricauth.R
@@ -23,7 +22,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun SplashScreen(onTimeout: () -> Unit) {
-    val ColinFont = FontFamily(Font(R.font.colin_extralight))
+    val colinFont = FontFamily(Font(R.font.colin_extralight))
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -40,7 +39,7 @@ fun SplashScreen(onTimeout: () -> Unit) {
                 fontSize = 70.sp,
                 color = Color.Black,
                 fontWeight = FontWeight.ExtraBold,
-                fontFamily = ColinFont,
+                fontFamily = colinFont,
             )
 
             Text(text = "Security Check",
@@ -57,10 +56,3 @@ fun SplashScreen(onTimeout: () -> Unit) {
     }
 }
 
-/*@Preview(showBackground = true)
-@Composable
-fun SplashPreview() {
-    SplashScreen {
-
-    }
-}*/
